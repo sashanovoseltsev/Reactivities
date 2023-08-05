@@ -1,12 +1,8 @@
 import axios, { AxiosError } from 'axios';
 import { FC, useEffect, useState } from 'react';
-import { Button, Header, List } from 'semantic-ui-react';
+import { Header, List } from 'semantic-ui-react';
 
-type AppProps = {
-  person: string;
-}
-
-const App: FC<AppProps> = ({person}) => {
+const App: FC = () => {
   const [activities, setActivities] = useState([]);
   const [error, setError] = useState('');
   
@@ -21,6 +17,14 @@ const App: FC<AppProps> = ({person}) => {
         setError(error.message + ' ' + error.config?.url);
       })
   }, []);
+
+
+  let res: any;
+  if (activities.length > 0) {
+    res = activities.map((activity: any) => (
+      activity.title
+    ));
+  }
 
   return (
     <div>
