@@ -6,15 +6,16 @@ import ActivityItem from "./ActivityItem";
 type Props = {
   activities: Activity[],
   selectActivity: (id: string) => void,
-  deleteActivity: (id: string) => void
+  deleteActivity: (id: string) => void,
+  submitting: boolean
 }
 
-const ActivityList: FC<Props> = ({activities, selectActivity, deleteActivity}) => (
+const ActivityList: FC<Props> = ({activities, submitting, selectActivity, deleteActivity}) => (
   
   <Segment>
     <Item.Group divided>
       {activities.map((activity) => (
-        <ActivityItem key={activity.id} activity={activity} selectActivity={selectActivity} deleteActivity={deleteActivity}/>
+        <ActivityItem key={activity.id} submitting={submitting} activity={activity} selectActivity={selectActivity} deleteActivity={deleteActivity}/>
       ))}
     </Item.Group>
   </Segment>

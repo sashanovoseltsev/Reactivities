@@ -14,7 +14,8 @@ type Props = {
   openForm: (id: string) => void,
   closeForm: () => void,
   createOrEdit: (activity: Activity) => void,
-  deleteActivity: (id: string) => void
+  deleteActivity: (id: string) => void,
+  submitting: boolean
 }
 
 const ActivityDashboard: FC<Props> = ({activities, 
@@ -25,11 +26,12 @@ const ActivityDashboard: FC<Props> = ({activities,
   openForm,
   closeForm,
   createOrEdit,
-  deleteActivity
+  deleteActivity,
+  submitting
 }) => (
   <Grid>
     <Grid.Column width='10'>
-      <ActivityList activities={activities} selectActivity={selectActivity} deleteActivity={deleteActivity}/>
+      <ActivityList activities={activities} submitting={submitting} selectActivity={selectActivity} deleteActivity={deleteActivity}/>
     </Grid.Column>
     <Grid.Column width='6'>
       <div style={{position: 'sticky', top: '60px'}}>
@@ -39,7 +41,7 @@ const ActivityDashboard: FC<Props> = ({activities,
                             openForm={openForm}
         />}
         {editMode && 
-          <ActivityForm createOrEdit={createOrEdit} closeForm={closeForm} activity={selectedActivity}/>
+          <ActivityForm createOrEdit={createOrEdit} closeForm={closeForm} activity={selectedActivity} submitting={submitting}/>
         }
       </div>
     </Grid.Column>

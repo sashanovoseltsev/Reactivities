@@ -1,7 +1,5 @@
-import { v4 } from "uuid";
-
 export class Activity {
-  id: string = v4();
+  id: string = '';
   title: string = '';
   date: string = '';
   description: string = '';

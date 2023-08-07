@@ -1,26 +1,33 @@
-import axios, { AxiosError } from 'axios';
 import { FC, useEffect, useState } from 'react';
 import { Container } from 'semantic-ui-react';
 
 import { Activity } from '../models/activity';
 import NavBar from './NavBar';
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
+import agent from '../api/agent';
+import LoadingComponent from './LoadingComponent';
+import { v4 } from 'uuid';
 
 const App: FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [error, setError] = useState('');
   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
   const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   
   useEffect(() => {
-    axios.get<Activity[]>('http://localhost:7007/api/activities')
-      .then(response => {
-        setActivities(response.data);
-      })
-      .catch((error: AxiosError) => {
-        console.log(error.toJSON());
-        setError(error.message + ' ' + error.config?.url);
-      })
+    agent.Activities.list().then(response => { 
+      setActivities(response);
+      setLoading(false);
+    });
+    // axios.get<Activity[]>('http://localhost:7007/api/activities')
+    //   .then(response => {
+    //     setActivities(response.data);
+    //   })
+    //   .catch((error: AxiosError) => {
+    //     console.log(error.toJSON());
+    //     setError(error.message + ' ' + error.config?.url);
+    //   })
   }, []);
 
   const handleSelectActivity = (id: string) => {
@@ -41,34 +48,48 @@ const App: FC = () => {
 
   const handleFormClose = () => setEditMode(false);
 
-  const handleCreateOrEdit = (activity: Activity) => {
-    setActivities([...activities.filter(x => x.id !== activity.id), activity]);
+  const handleCreateOrEdit = async (activity: Activity) => {
+    setSubmitting(true);
+    if (activity.id) {
+      setActivities([...activities.filter(x => x.id !== activity.id), activity]);
+      await agent.Activities.update(activity);
+    } else {
+      activity.id = v4();
+      setActivities([...activities, activity]);
+      await agent.Activities.create(activity);
+    }
+
     setSelectedActivity(activity);
     handleFormClose();
+    setSubmitting(false);
   }
 
-  const handleDeleteActivity = (id: string) => {
+  const handleDeleteActivity = async (id: string) => {
+    setSubmitting(true);
+    await agent.Activities.delete(id);
     setActivities([...activities.filter(x => x.id !== id)]);
+    setSubmitting(false);
   }
+
+  if (loading) return <LoadingComponent content='Loading app' />
 
   return (
     <>
       <NavBar openForm={handleFormOpen}/>
       <Container style={{marginTop: '60px'}}>
         {
-          error !== ''
-          ? <span>{error}</span>
-          : <ActivityDashboard 
-              activities={activities} 
-              selectedActivity={selectedActivity}
-              selectActivity={handleSelectActivity}
-              cancelSelectActivity={handleCancelSelectActivity}
-              editMode={editMode}
-              openForm={handleFormOpen}
-              closeForm={handleFormClose}
-              createOrEdit={handleCreateOrEdit}
-              deleteActivity={handleDeleteActivity}
-            />
+          <ActivityDashboard 
+            activities={activities} 
+            selectedActivity={selectedActivity}
+            selectActivity={handleSelectActivity}
+            cancelSelectActivity={handleCancelSelectActivity}
+            editMode={editMode}
+            openForm={handleFormOpen}
+            closeForm={handleFormClose}
+            createOrEdit={handleCreateOrEdit}
+            deleteActivity={handleDeleteActivity}
+            submitting={submitting}
+          />
         }
       </Container>
     </>
