@@ -1,18 +1,13 @@
-import React, { ChangeEvent, FC, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { Button, Form, Segment } from 'semantic-ui-react';
 import { Activity } from '../../../app/models/activity';
 import { isEqual } from 'lodash';
+import { useStore } from '../../../app/stores/store';
+import { observer } from 'mobx-react-lite';
 
-type Props = {
-  activity: Activity | undefined,
-  closeForm: () => void,
-  createOrEdit: (activity: Activity) => void,
-  submitting: boolean
-}
-
-const ActivityForm: FC<Props> = ({createOrEdit, activity: selectedActivity, closeForm, submitting}) => {
+const ActivityForm = () => {
   
-  console.log('form render');
+  const { activityStore: { selectedActivity, loading, createActivity, updateActivity , closeForm} } = useStore();
   const initialState = selectedActivity ?? new Activity()
 
   const [activity, setActivity] = useState(initialState);
@@ -21,13 +16,13 @@ const ActivityForm: FC<Props> = ({createOrEdit, activity: selectedActivity, clos
   const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     event.preventDefault();
     const {name, value} = event.target;
-    const updatedActivity = {...activity, [name]: value};
+    const updatedActivity = {...activity, [name]: value };
     setActivity(updatedActivity);
     setFormEdited(!isEqual(initialState, updatedActivity));
   }
 
   const handleSubmit = () => {
-    createOrEdit(activity);
+    activity.id ? updateActivity(activity) : createActivity(activity);
   }
 
   return (
@@ -39,10 +34,10 @@ const ActivityForm: FC<Props> = ({createOrEdit, activity: selectedActivity, clos
         <Form.Input placeholder='Date' name='date' value={activity.date} onChange={handleInputChange} />
         <Form.Input placeholder='City' name='city' value={activity.city} onChange={handleInputChange} />
         <Form.Input placeholder='Venue' name='venue' value={activity.venue} onChange={handleInputChange} />
-        <Button loading={submitting} disabled={!formEdited} floated='right' positive type='submit' content='Submit' />
+        <Button loading={loading} disabled={!formEdited} floated='right' positive type='submit' content='Submit' />
         <Button onClick={() => closeForm()} floated='right' type='button' content='Cancel' />
       </Form>
     </Segment>
 )}
 
-export default ActivityForm;
+export default observer(ActivityForm);

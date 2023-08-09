@@ -1,24 +1,22 @@
 import { screen, render, act } from '@testing-library/react';
-
-import axios from 'axios';
-
+import agent from '../api/agent';
 import App from './App';
+import { Activity } from '../models/activity';
+import { v4 } from 'uuid';
 
-jest.mock('axios', () => ({
-  ...jest.requireActual('axios'),
-  get: jest.fn()
-}));
+jest.mock('../api/agent');
 
 describe('Test for App component', () => {
-  test('It renders correctly with person name provided', async () => {
-    const responsePromise = Promise.resolve({ 
-      data: [
-        { id: 1, title: 'Act 1'},
-        { id: 2, title: 'Act 2'}
-      ]
-    });
-    axios.get.mockReturnValue(responsePromise);
-
+  test('It renders correctly with all activities obtained from API', async () => {
+    
+    const activities = [new Activity(), new Activity()];
+    activities[0].title = 'Act 1';
+    activities[0].id = v4();
+    activities[1].title = 'Act 2';
+    activities[1].id = v4();
+    const responsePromise = Promise.resolve(activities);
+    agent.Activities.list.mockReturnValue(responsePromise);
+    
     render(<App />);
     
     await act(() => responsePromise)

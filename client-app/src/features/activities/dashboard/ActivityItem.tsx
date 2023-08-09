@@ -1,21 +1,20 @@
 import React, { FC, SyntheticEvent, useState } from "react";
 import { Activity } from "../../../app/models/activity";
 import { Button, Item, Label } from "semantic-ui-react";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
 type Props = {
-  activity: Activity, 
-  selectActivity: (id: string) => void,
-  deleteActivity: (id: string) => void,
-  submitting: boolean
+  activity: Activity
 }
 
-const ActivityItem: FC<Props> = ({activity, submitting, selectActivity, deleteActivity}) => {
+const ActivityItem: FC<Props> = ({activity}) => {
   
+  const { activityStore: {loading, selectActivity, deleteActivity} } = useStore();
   const [target, setTarget] = useState('');
 
   const handleDelete = (id: string, e: SyntheticEvent<HTMLButtonElement>) => {
-    const currentTarget = e.currentTarget.name;
-    setTarget(currentTarget);
+    setTarget(e.currentTarget.name);
     deleteActivity(id);
   }
 
@@ -23,7 +22,7 @@ const ActivityItem: FC<Props> = ({activity, submitting, selectActivity, deleteAc
   <Item key={activity.id}>
     <Item.Content>
       <Item.Header as='a'>{activity.title}</Item.Header>
-      <Item.Meta>{activity.date}</Item.Meta>
+      <Item.Meta>{(new Date(activity.date).toDateString())}</Item.Meta>
       <Item.Description>
         <div>{activity.description}</div>
         <div>{activity.city}, {activity.venue}</div>
@@ -33,7 +32,7 @@ const ActivityItem: FC<Props> = ({activity, submitting, selectActivity, deleteAc
           floated="right" 
           content='View' 
           color='blue' />
-        <Button loading={submitting && target === activity.id} 
+        <Button loading={loading && target === activity.id} 
           onClick={(e) => handleDelete(activity.id, e)} 
           name={activity.id} 
           floated="right" 
@@ -45,4 +44,4 @@ const ActivityItem: FC<Props> = ({activity, submitting, selectActivity, deleteAc
   </Item>
 )}
 
-export default ActivityItem;
+export default observer(ActivityItem);

@@ -15,12 +15,21 @@ axios.interceptors.response.use(async response => {
   }
 })
 
+axios.interceptors.request.use(async request => {
+  console.log('request interceptor');
+  console.log(request.baseURL);
+  console.log(request.url);
+  console.log(request.method);
+
+  return request;
+});
+
 const responseBody = <T> (response: AxiosResponse<T>) => response.data;
 
 const requests = {
   get: <T> (url: string) => axios.get<T>(url).then(responseBody),
   post: <T> (url: string, body: {}) => axios.post<T>(url, body).then(responseBody),
-  put: <T> (url: string, body: {}) => axios.get<T>(url, body).then(responseBody),
+  put: <T> (url: string, body: {}) => axios.put<T>(url, body).then(responseBody),
   del: <T> (url: string) => axios.delete<T>(url).then(responseBody),
 }
 
