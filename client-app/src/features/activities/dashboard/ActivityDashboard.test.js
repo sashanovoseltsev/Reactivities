@@ -1,10 +1,10 @@
 import { screen, render, act } from '@testing-library/react';
-import agent from '../api/agent';
-import App from './App';
-import { Activity } from '../models/activity';
+import agent from '../../../app/api/agent';
+import { Activity } from '../../../app/models/activity';
 import { v4 } from 'uuid';
+import ActivityDashboard from './ActivityDashboard';
 
-jest.mock('../api/agent');
+jest.mock('../../../app/api/agent');
 
 describe('Test for App component', () => {
   test('It renders correctly with all activities obtained from API', async () => {
@@ -17,7 +17,7 @@ describe('Test for App component', () => {
     const responsePromise = Promise.resolve(activities);
     agent.Activities.list.mockReturnValue(responsePromise);
     
-    render(<App />);
+    render(<ActivityDashboard />);
     
     await act(() => responsePromise)
     expect(screen.getByText('Act 1')).toBeInTheDocument();

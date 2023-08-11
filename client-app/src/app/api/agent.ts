@@ -15,14 +15,14 @@ axios.interceptors.response.use(async response => {
   }
 })
 
-axios.interceptors.request.use(async request => {
-  console.log('request interceptor');
-  console.log(request.baseURL);
-  console.log(request.url);
-  console.log(request.method);
+// axios.interceptors.request.use(async request => {
+//   console.log('request interceptor');
+//   console.log(request.baseURL);
+//   console.log(request.url);
+//   console.log(request.method);
 
-  return request;
-});
+//   return request;
+// });
 
 const responseBody = <T> (response: AxiosResponse<T>) => response.data;
 

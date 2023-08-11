@@ -3,6 +3,7 @@ import { Activity } from "../../../app/models/activity";
 import { Button, Item, Label } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
 
 type Props = {
   activity: Activity
@@ -10,7 +11,7 @@ type Props = {
 
 const ActivityItem: FC<Props> = ({activity}) => {
   
-  const { activityStore: {loading, selectActivity, deleteActivity} } = useStore();
+  const { activityStore: {loading, deleteActivity} } = useStore();
   const [target, setTarget] = useState('');
 
   const handleDelete = (id: string, e: SyntheticEvent<HTMLButtonElement>) => {
@@ -28,7 +29,7 @@ const ActivityItem: FC<Props> = ({activity}) => {
         <div>{activity.city}, {activity.venue}</div>
       </Item.Description>
       <Item.Extra>
-        <Button onClick={() => selectActivity(activity.id)} 
+        <Button as={Link} to={`/activities/${activity.id}`}
           floated="right" 
           content='View' 
           color='blue' />
