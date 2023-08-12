@@ -56,10 +56,6 @@ const ActivityForm = () => {
     }
   }
 
-  console.log('initialState', initialState);
-  console.log('activity', activity);
-  console.log('are equal: ', isEqual(initialState, activity));
-
   return (
     <Segment clearing>
       <Form onSubmit={handleSubmit}>

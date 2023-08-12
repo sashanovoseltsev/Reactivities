@@ -1,3 +1,13 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+ 
  body {
   background-color: #EAEAEA !important;
  }
@@ -5,3 +15,47 @@
  .ui.inverted.top.fixed.menu {
   background-image: linear-gradient(135deg, rgb(24,42,115) 0%, rgb(33, 138, 174) 69%, rgb(32, 167, 172) 89%) !important;
  }
+
+ .react-calendar {
+  width: 100%;
+  border: none;
+  box-shadow: 0 1px 2px 0 rgba(34, 36, 38, .15);
+ }
+
+ /*home page styles*/
+
+.masthead {
+  display: flex;
+  align-items: center;
+  background-image: linear-gradient(
+          135deg,
+          rgb(24, 42, 115) 0%,
+          rgb(33, 138, 174) 69%,
+          rgb(32, 167, 172) 89%
+  ) !important;
+  height: 100vh;
+}
+
+.masthead .ui.menu .ui.button,
+.ui.menu a.ui.inverted.button {
+  margin-left: 0.5rem;
+}
+
+.masthead h1.ui.header {
+  display: flex;
+  font-size: 5rem;
+  font-weight: normal;
+  align-items: center;
+  justify-content: center;
+}
+
+.masthead h2 {
+  font-size: 4rem;
+  font-weight: normal;
+}
+
+.ui.massive.image {
+  font-size: 2.6rem;
+}
+
+/*end home page styles*/

@@ -16,6 +16,14 @@ export default class ActivityStore {
       .sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
   }
 
+  get activitiesGroupedByDate() {
+    return Array.from(this.activityRegistry.values()).reduce((activities, activity) => {
+      const date = activity.date.split('T')[0];
+      activities[date] = activities[date] ? [...activities[date], activity] : [activity];
+      return activities;
+    }, {} as {[key: string]: Activity[]})
+  }
+
   loadActivities = async () => {
     this.setInitialLoading(true);
     try {
@@ -32,6 +40,7 @@ export default class ActivityStore {
     }
   }
 
+  // NOTE: doesn't add to registry!
   loadActivity = async (id: string) => {
     this.setInitialLoading(true);
     let activity = this.getActivityFromRegistry(id);
@@ -47,14 +56,6 @@ export default class ActivityStore {
     
     this.setInitialLoading(false);
     return activity;
-  }
-
-  private addToActivityRegistry = (activity: Activity) => {
-    this.activityRegistry.set(activity.id, activity);
-  }
-
-  private getActivityFromRegistry = (id: string) => {
-    return this.activityRegistry.get(id);
   }
 
   createActivity = async (activity: Activity) => {
@@ -105,7 +106,15 @@ export default class ActivityStore {
     }
   }
 
-  setInitialLoading = (state: boolean) => {
+  private addToActivityRegistry = (activity: Activity) => {
+    this.activityRegistry.set(activity.id, activity);
+  }
+
+  private getActivityFromRegistry = (id: string) => {
+    return this.activityRegistry.get(id);
+  }
+
+  private setInitialLoading = (state: boolean) => {
     this.loadingInitial = state;
   }
 }
