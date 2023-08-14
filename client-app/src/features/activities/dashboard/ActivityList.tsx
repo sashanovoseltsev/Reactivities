@@ -9,21 +9,19 @@ const ActivityList = () => {
   const { activityStore: { activitiesGroupedByDate } } = useStore();
 
   return (
-  <>
-    {Object.entries(activitiesGroupedByDate).map(group => {
-      const [date, activities] = group;
-      return (
-        <Fragment key={date}>
-          <Header sub color='teal'>{date}</Header>
-          {activities.map((activity) => (
-            <ActivityItem key={activity.id} activity={activity} />
-          ))}
-        </Fragment>
-      );
-    })}
-  </>
-  
-
+    <>
+      {Object.entries(activitiesGroupedByDate).map(group => {
+        const [date, activities] = group;
+        return (
+          <Fragment key={date}>
+            <Header sub color='teal'>{date}</Header>
+            {activities.map((activity) => (
+              <ActivityItem key={activity.id} activity={activity} />
+            ))}
+          </Fragment>
+        );
+      })}
+    </>
   );
 }
 
