@@ -58,4 +58,8 @@ html {
   font-size: 2.6rem;
 }
 
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
 /*end home page styles*/
