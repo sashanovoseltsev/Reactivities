@@ -17,21 +17,21 @@ import MyDateInput from '../../../app/common/form/MyDateInput';
 const ActivityForm = () => {
   const { activityStore: { loadingInitial, loadActivity, loading, createActivity, updateActivity } } = useStore();
 
-  const [initialState, setInitialState] = useState<Activity>({ 
-    id: '',
-    title: 'Music',
-    date: null,
-    description: 'Test Music Event',
-    category: 'music',
-    city: 'London',
-    venue: 'Pub #1'
-  });
+  const [initialState, setInitialState] = useState<Activity>(new Activity( 
+    '',
+    'Music',
+    null,
+    'Test Music Event',
+    'music',
+    'London',
+    'Pub #1'
+  ));
 
   const validationSchema = Yup.object({
     title: Yup.string().required('The activity title is required.'),
     description: Yup.string().required(),
     category: Yup.string().required(),
-    date: Yup.string().required('Date is required').nullable(),
+    //date: Yup.string().required('Date is required').nullable(), - NOTE: date validation doesn't work now with react-date-picker
     city: Yup.string().required(),
     venue: Yup.string().required()
   })

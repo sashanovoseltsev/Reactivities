@@ -3,8 +3,6 @@ import { Activity } from "../../../app/models/activity";
 import { Button, Icon, Item, Segment } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
-import { format } from 'date-fns';
-import { dateTimeFormat } from "../../../app/common/formats/dateFormats";
 
 type Props = {
   activity: Activity
@@ -28,7 +26,7 @@ const ActivityItem: FC<Props> = ({activity}) => {
       </Segment>
       <Segment>
         <span style={{marginRight: '1rem'}}>
-          <Icon name='clock' />{(new Date(format(activity.date!, dateTimeFormat)).toDateString())}
+          <Icon name='clock' />{activity.dateTimeFormatted}
         </span>
         <span>
           <Icon name='marker' />{activity.venue}
