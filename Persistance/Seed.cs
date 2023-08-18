@@ -7,11 +7,6 @@ namespace Persistance
     {
         public static async Task SeedData(DataContext context, UserManager<AppUser> userManager)
         {
-            System.Console.WriteLine($"Users in DB: {userManager.Users.Any()}");
-            foreach (var user in userManager.Users)
-            {
-                System.Console.WriteLine(user.DisplayName);
-            }
             if (!userManager.Users.Any())
             {
                 var users = new List<AppUser>
