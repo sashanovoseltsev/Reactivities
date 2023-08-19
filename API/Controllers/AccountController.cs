@@ -38,11 +38,6 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
-            if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.UserName))
-            {
-                return BadRequest("Username is already taken");
-            }
-
             var user = new AppUser
             {
                 DisplayName = registerDto.DisplayName,
@@ -57,7 +52,11 @@ namespace API.Controllers
                 return CreateUserObject(user);
             }
 
-            return BadRequest(result.Errors);
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(error.Code, error.Description);
+            }
+            return ValidationProblem();
         }
 
         [Authorize]

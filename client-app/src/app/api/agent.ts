@@ -2,10 +2,19 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { Activity } from "../models/activity";
 import { toast } from "react-toastify";
 import { router } from "../router/Route";
+import { User, UserFormValues } from "../models/user";
+import { store } from "../stores/store";
 
 const sleep = (delayMs: number) => new Promise(resolve => setTimeout(resolve, delayMs));
 
 axios.defaults.baseURL = 'http://localhost:7007/api';
+
+axios.interceptors.request.use(config => {
+  const token = store.commonStore.jwtToken;
+  if (token && config) config.headers.Authorization = `Bearer ${token}`;
+
+  return config;
+})
 
 axios.interceptors.response.use(async response => {
   await sleep(1000);
@@ -70,8 +79,15 @@ const Activities = {
   delete: (id: string) => requests.del<void>(`/activities/${id}`)
 }
 
+const Account = {
+  current: () => requests.get<User>('/account'),
+  login: (userInfo: UserFormValues) => requests.post<User>('/account/login', userInfo),
+  register: (userInfo: UserFormValues) => requests.post<User>('/account/register', userInfo)
+}
+
 const agent = {
-  Activities
+  Activities,
+  Account
 }
 
 export default agent;
