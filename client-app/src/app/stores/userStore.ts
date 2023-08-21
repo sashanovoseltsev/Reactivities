@@ -58,6 +58,8 @@ export default class UserStore {
         this.user = user;
       });
     } catch (error) {
+      // we only log error instead of throwing here because,
+      // in such case we will only render empty activites page with unauthorized toast
       console.log(error);
     }
   }

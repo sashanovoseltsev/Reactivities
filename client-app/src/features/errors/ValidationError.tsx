@@ -1,7 +1,7 @@
 import { Message } from "semantic-ui-react";
 
 interface Props {
-  errors: any;
+  errors: any; // any to simplify passing errors from formik
 }
 
 const ValidationError = ({errors}: Props) => {

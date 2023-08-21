@@ -66,6 +66,8 @@ namespace API.Controllers
             // User is representing current authenticated user
             var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
 
+            if (user == null) return Unauthorized();
+
             return CreateUserObject(user);
         }
 
