@@ -1,14 +1,13 @@
-import { FC } from "react";
-import { Activity } from "../../../app/models/activity";
 import { Grid, Icon, Segment } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
+import { useStore } from "../../../app/stores/store";
 
+const ActivityDetailedInfo = () => {
+  const { activityStore } = useStore();
+  const activity = activityStore.selectedActivity;
 
-interface Props {
-  activity: Activity
-}
-
-const ActivityDetailedInfo: FC<Props> = ({activity}) => {
+  if (!activity) return null;
+  
   return (
     <Segment.Group>
       <Segment attached='top'>

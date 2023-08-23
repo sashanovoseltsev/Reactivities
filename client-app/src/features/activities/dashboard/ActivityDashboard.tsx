@@ -7,13 +7,13 @@ import LoadingComponent from "../../../app/layout/LoadingComponent";
 import ActivityFilters from "./ActivityFilters";
 
 const ActivityDashboard = () => {
-  const { activityStore: { loadActivities, activityRegistry, loadingInitial} } = useStore();
+  const { activityStore: { loadActivities, loading, activityRegistry} } = useStore();
   
   useEffect(() => {
     if (activityRegistry.size === 0) loadActivities();
   }, [loadActivities, activityRegistry]);
 
-  if (loadingInitial) return <LoadingComponent content='Loading activities...' />
+  if (loading) return <LoadingComponent content='Loading activities...' />
 
   return (<Grid>
       <Grid.Column width='10'>

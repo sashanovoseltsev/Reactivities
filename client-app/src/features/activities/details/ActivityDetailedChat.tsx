@@ -1,13 +1,12 @@
 import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import { Activity } from "../../../app/models/activity";
 import { Header, Segment, Comment, Form, Button } from "semantic-ui-react";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-  activity: Activity
-}
+const ActivityDetailedChat = () => {
+    const { activityStore: {selectedActivity}} = useStore();
 
-const ActivityDetailedChat:FC<Props> = ({activity}) => {
+    if (!selectedActivity) return null;
+
   return (
     <>
       <Segment

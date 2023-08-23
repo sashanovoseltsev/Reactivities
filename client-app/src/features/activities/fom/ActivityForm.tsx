@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Button, Header, Segment } from 'semantic-ui-react';
-import { Activity } from '../../../app/models/activity';
 import { useStore } from '../../../app/stores/store';
 import { observer } from 'mobx-react-lite';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -13,19 +12,10 @@ import MyTextArea from '../../../app/common/form/MyTextArea';
 import MySelectInput from '../../../app/common/form/MySelectInput';
 import { categoryOptions } from '../../../app/common/options/categoryOptions';
 import MyDateInput from '../../../app/common/form/MyDateInput';
+import ActivityFormValues from '../../../app/models/activityFormValues';
 
 const ActivityForm = () => {
-  const { activityStore: { loadingInitial, loadActivity, loading, createActivity, updateActivity } } = useStore();
-
-  const [initialState, setInitialState] = useState<Activity>(new Activity( 
-    '',
-    'Music',
-    null,
-    'Test Music Event',
-    'music',
-    'London',
-    'Pub #1'
-  ));
+  const { activityStore: { loadActivity, loading, createActivity, updateActivity } } = useStore();
 
   const validationSchema = Yup.object({
     title: Yup.string().required('The activity title is required.'),
@@ -36,27 +26,21 @@ const ActivityForm = () => {
     venue: Yup.string().required()
   })
 
-  const [activity, setActivity] = useState<Activity | undefined>(undefined);
+  const [activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues());
   const {id} = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
-      loadActivity(id).then(activity => {
-        setActivity(activity);
-        setInitialState(activity!);
-      });
-    } 
-    else {
-      setActivity(initialState);
+      loadActivity(id).then(a => setActivity(ActivityFormValues.FromActivity(a!)));
     }
     // empty dependency for component initialization purposes
     // eslint-disable-next-line
   }, [])
 
-  if (loadingInitial || !activity) return <LoadingComponent />
+  if (loading) return <LoadingComponent />
 
-  const handleFormSubmit = (activity: Activity) => {
+  const handleFormSubmit = (activity: ActivityFormValues) => {
     if (!activity.id) {
       activity.id = v4();
       createActivity(activity).then(() => navigate(`/activities/${activity.id}`));

@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { router } from "../router/Route";
 import { User, UserFormValues } from "../models/user";
 import { store } from "../stores/store";
+import ActivityFormValues from "../models/activityFormValues";
 
 const sleep = (delayMs: number) => new Promise(resolve => setTimeout(resolve, delayMs));
 
@@ -17,7 +18,7 @@ axios.interceptors.request.use(config => {
 })
 
 axios.interceptors.response.use(async response => {
-  await sleep(1000);
+  await sleep(500);
   return response;
 }, (error: AxiosError) => {
   const { data, status, config } = error.response as AxiosResponse;
@@ -74,9 +75,10 @@ const requests = {
 const Activities = {
   list: () => requests.get<Activity[]>('/activities'),
   details: (id: string) => requests.get<Activity>(`/activities/${id}`),
-  create: (activity: Activity) => requests.post<void>('/activities', activity),
-  update: (activity: Activity) => requests.put<void>(`/activities/${activity.id}`, activity),
-  delete: (id: string) => requests.del<void>(`/activities/${id}`)
+  create: (activity: ActivityFormValues) => requests.post<void>('/activities', activity),
+  update: (activity: ActivityFormValues) => requests.put<void>(`/activities/${activity.id}`, activity),
+  delete: (id: string) => requests.del<void>(`/activities/${id}`),
+  updateAttendance: (id: string) => requests.post<void>(`/activities/${id}/attend`, {})
 }
 
 const Account = {

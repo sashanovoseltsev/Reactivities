@@ -18,12 +18,14 @@ export default class UserStore {
   login = async (userInfo: UserFormValues) => {
     try {
       const user = await agent.Account.login(userInfo);
-      store.commonStore.setToken(user.token);
       runInAction(() => {
+        store.commonStore.setToken(user.token);
+        // reload activities to update host information
+        store.activityStore.loadActivities();
         this.user = user;
+        router.navigate('/activities');
+        store.modalStore.closeModal();      
       })
-      router.navigate('/activities');
-      store.modalStore.closeModal();      
     } catch (error) {
       throw error;
     }

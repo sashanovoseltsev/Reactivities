@@ -1,8 +1,7 @@
-import { FC } from "react";
-import { Activity } from "../../../app/models/activity";
 import { observer } from "mobx-react-lite";
-import { Button, Header, Image, Item, Segment } from "semantic-ui-react";
+import { Button, Header, Image, Item, Label, Segment } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import { useStore } from "../../../app/stores/store";
 
 const activityImageStyle = {
   filter: 'brightness(30%)'
@@ -17,27 +16,32 @@ const activityImageTextStyle = {
   color: 'white'
 }
 
-interface Props {
-  activity: Activity
-}
+const ActivityDetailedHeader = () => {
 
-const ActivityDetailedHeader:FC<Props> = ({activity}) => {
+  const { activityStore: {loading, updateAttendance, selectedActivity, cancelActivity}} = useStore();
+
+  if (!selectedActivity) return null;
+
   return (
     <Segment.Group>
       <Segment basic attached='top' style={{padding: '0'}}>
-        <Image src={`/assets/categoryImages/${activity.category}.jpg`} fluid style={activityImageStyle}/>
+        {selectedActivity.isCancelled && 
+          <Label ribbon color='red' content='Cancelled'
+           style={{position: 'absolute', left: '-10px', top: '20px', zIndex: 1000}}/>
+        }
+        <Image src={`/assets/categoryImages/${selectedActivity.category}.jpg`} fluid style={activityImageStyle}/>
         <Segment style={activityImageTextStyle} basic>
           <Item.Group>
             <Item>
               <Item.Content>
                 <Header 
                   size='huge'
-                  content={activity.title}
+                  content={selectedActivity.title}
                   style={{color: 'white'}}
                 />
-                <p>{activity.dateTimeFormatted}</p>
+                <p>{selectedActivity.dateTimeFormatted}</p>
                 <p>
-                  Hosted by <strong>Bob</strong>
+                  Hosted by <strong><Link to={`/profiles/${selectedActivity.host.userName}`}>{selectedActivity.host.displayName}</Link></strong>
                 </p>
               </Item.Content>
             </Item>
@@ -45,9 +49,36 @@ const ActivityDetailedHeader:FC<Props> = ({activity}) => {
         </Segment>
       </Segment>
       <Segment clearing attached='bottom'>
-        <Button color='teal' style={{marginRight: '1rem'}}>Join Activity</Button>
-        <Button>Cancel attendance</Button>
-        <Button as={Link} to={`/manage/${activity.id}`} color='orange' floated='right'>Manage Event</Button>
+        {selectedActivity.isHost ? (
+          <>
+            <Button 
+              basic
+              color={selectedActivity.isCancelled ? 'green' : 'red'}
+              floated="left"
+              content={selectedActivity.isCancelled ? 'Re-activate activity' : 'Cancel activity'}
+              loading={loading}
+              onClick={cancelActivity}
+            />
+            <Button as={Link} 
+              to={`/manage/${selectedActivity.id}`} 
+              color='orange' 
+              floated='right'
+              disabled={selectedActivity.isCancelled}>
+                Manage Event
+            </Button>
+          </>
+        ) : selectedActivity.isGoing ? (
+          <Button loading={loading} onClick={updateAttendance}>
+            Cancel attendance</Button>
+        ) : (
+          <Button loading={loading} 
+            disabled={selectedActivity.isCancelled}
+            onClick={updateAttendance} 
+            color='teal'
+            style={{marginRight: '1rem'}}>
+            Join Activity
+          </Button>
+        )}
       </Segment>
     </Segment.Group>
   )
