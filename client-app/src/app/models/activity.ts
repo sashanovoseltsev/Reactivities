@@ -37,9 +37,9 @@ export class Activity {
     category: string,
     city: string,
     venue: string,
-    hostUserName: string,
     isCancelled: boolean,
-    attendees: UserProfile[],
+    host?: UserProfile,
+    attendees?: UserProfile[],
     isGoing?: boolean,
     isHost?: boolean
   ) {
@@ -50,23 +50,22 @@ export class Activity {
     this.category = category;
     this.city = city;
     this.venue = venue;
-    this.hostUserName = hostUserName;
     this.isCancelled = isCancelled;
-    this.attendees = attendees;
-
+    
     const user = store.userStore.user;
-    this.host = attendees.find(a => a.userName === this.hostUserName)!;
+    this.host = host ?? user!;
+    this.hostUserName = this.host.userName;
+    this.attendees = attendees ?? [user!];
     this.isHost = isHost ?? user!.userName === this.hostUserName;
-    this.isGoing = isGoing ?? attendees.some(a => user!.userName === a.userName);
+    this.isGoing = isGoing ?? this.attendees.some(a => user!.userName === a.userName);
   }
 
   static FromActivity(a: Activity): Activity {
-    return new Activity(a.id, a.title, a.date, a.description, a.category, a.city, a.venue, a.hostUserName, a.isCancelled, a.attendees);
+    return new Activity(a.id, a.title, a.date, a.description, a.category, a.city, a.venue, a.isCancelled, a.host, a.attendees);
   }
 
   static FromActivityFormValues(a: ActivityFormValues) {
-    const user = store.userStore.user!;
-    return new Activity(a.id ?? '', a.title, a.date, a.description, a.category, a.city, a.venue, user.userName, false, [user]);
+    return new Activity(a.id ?? '', a.title, a.date, a.description, a.category, a.city, a.venue, false);
   }
 
   get dateFormatted() {

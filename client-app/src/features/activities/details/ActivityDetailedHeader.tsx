@@ -18,7 +18,14 @@ const activityImageTextStyle = {
 
 const ActivityDetailedHeader = () => {
 
-  const { activityStore: {loading, updateAttendance, selectedActivity, cancelActivity}} = useStore();
+  const { 
+    activityStore: {
+      loading, 
+      updateAttendance, 
+      cancelActivity, 
+      selectedActivity
+    }
+  } = useStore();
 
   if (!selectedActivity) return null;
 

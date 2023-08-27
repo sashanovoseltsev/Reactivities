@@ -39,6 +39,8 @@ export default class ActivityStore {
   loadActivities = async () => {
     this.loading = true;
     try {
+      // TS specific! Even thoug we obtain instance of type Activity from API, on this step it is only a data shape, not actual instance with class methods.
+      // In order to have access to class methods, propper instance should be created using class's constructor.
       const activities = (await agent.Activities.list()).map(a => Activity.FromActivity(a));
       runInAction(() => {
         activities.forEach(activity => {
@@ -59,6 +61,7 @@ export default class ActivityStore {
 
     if (!activity) {
       try {
+        // TS specific! See comment in loadActivities.
         activity = Activity.FromActivity(await agent.Activities.details(id));
       } catch (error) {
         console.log(error);
@@ -161,8 +164,7 @@ export default class ActivityStore {
         }
         activity.isGoing = !activity.isGoing;
         
-        // we need to create new instance for selectedActivity to trigger re-render of activity details components.
-        this.selectActivity(Activity.FromActivity(activity));
+        this.selectActivity(activity);
       })
     } catch (error) {
       console.log(error);
@@ -183,7 +185,8 @@ export default class ActivityStore {
       // Only update in registry in case activities were loaded.
       if (this.activityRegistry.size > 0)
         this.addToActivityRegistry(activity);
-      this.selectActivity(Activity.FromActivity(activity));
+
+      this.selectActivity(activity);
 
     } catch (error) {
       console.log(error);
