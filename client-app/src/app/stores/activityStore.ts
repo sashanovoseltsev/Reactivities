@@ -15,7 +15,8 @@ import ActivityFormValues from "../models/activityFormValues";
 
 export default class ActivityStore {
   activityRegistry = new Map<string, Activity>();
-  loading = false;
+  initialLoading = false; // used when activities are not loaded from server OR when single activity is loaded (in form or in details view)
+  loading = false; // used when manipulations to already loaded activities are done
   selectedActivity: Activity | null = null;
   modifiedActivityId: string | null = null; //TODO
 
@@ -37,7 +38,7 @@ export default class ActivityStore {
   }
 
   loadActivities = async () => {
-    this.loading = true;
+    this.initialLoading = true;
     try {
       // TS specific! Even thoug we obtain instance of type Activity from API, on this step it is only a data shape, not actual instance with class methods.
       // In order to have access to class methods, propper instance should be created using class's constructor.
@@ -51,12 +52,12 @@ export default class ActivityStore {
       console.log(error);
     }
     runInAction(() => {
-      this.loading = false;
+      this.initialLoading = false;
     });
   }
 
   loadActivity = async (id: string) => {
-    this.loading = true;
+    this.initialLoading = true;
     let activity = this.getActivityFromRegistry(id);
 
     if (!activity) {
@@ -69,7 +70,7 @@ export default class ActivityStore {
     }
     
     runInAction(() => {
-      this.loading = false;
+      this.initialLoading = false;
     });
     return activity;
   }
@@ -148,11 +149,11 @@ export default class ActivityStore {
     try {
       const user = store.userStore.user!;
 
-      await agent.Activities.updateAttendance(activity.id);
+      await agent.Activities.updateAttendance(this.selectedActivity!.id);
 
       runInAction(() => {
-        if (activity.isGoing) {
-          activity.attendees = activity.attendees.filter(x => x.userName !== user?.userName);
+        if (this.selectedActivity!.isGoing) {
+          this.selectedActivity!.attendees = this.selectedActivity!.attendees.filter(x => x.userName !== user?.userName);
         } else {
           const userProfile = {
             userName: user.userName,
@@ -160,11 +161,11 @@ export default class ActivityStore {
             bio: undefined,
             image: user.image
           }
-          activity.attendees.push(userProfile);
+          this.selectedActivity!.attendees.push(userProfile);
         }
-        activity.isGoing = !activity.isGoing;
+        this.selectedActivity!.isGoing = !this.selectedActivity!.isGoing;
         
-        this.selectActivity(activity);
+        //this.selectActivity(activity);
       })
     } catch (error) {
       console.log(error);

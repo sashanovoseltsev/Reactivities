@@ -15,7 +15,7 @@ import MyDateInput from '../../../app/common/form/MyDateInput';
 import ActivityFormValues from '../../../app/models/activityFormValues';
 
 const ActivityForm = () => {
-  const { activityStore: { loadActivity, loading, createActivity, updateActivity } } = useStore();
+  const { activityStore: { loadActivity, loading, initialLoading, createActivity, updateActivity } } = useStore();
 
   const validationSchema = Yup.object({
     title: Yup.string().required('The activity title is required.'),
@@ -38,7 +38,7 @@ const ActivityForm = () => {
     // eslint-disable-next-line
   }, [])
 
-  if (loading) return <LoadingComponent />
+  if (initialLoading) return <LoadingComponent />
 
   const handleFormSubmit = (activity: ActivityFormValues) => {
     if (!activity.id) {

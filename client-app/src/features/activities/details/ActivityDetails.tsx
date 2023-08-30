@@ -12,7 +12,7 @@ import ActivityDetailedSidebar from './ActivityDetailedSidebar';
 const ActivityDetails = () => {
 
   const { activityStore } = useStore();
-  const { loadActivity, loading, selectActivity, selectedActivity } = activityStore;
+  const { loadActivity, initialLoading, selectActivity, selectedActivity } = activityStore;
 
   const {id} = useParams();
 
@@ -23,7 +23,7 @@ const ActivityDetails = () => {
     // eslint-disable-next-line
   }, [])
 
-  if (loading || !selectedActivity) return <LoadingComponent />
+  if (initialLoading || !selectedActivity) return <LoadingComponent />
 
   return (
     <Grid>

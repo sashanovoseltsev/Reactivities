@@ -6,7 +6,7 @@ import { useStore } from '../../../app/stores/store';
 export default observer(function ActivityDetailedSidebar () {
     const { activityStore: { selectedActivity} } = useStore();
 
-    if (!selectedActivity || !selectedActivity.attendees) return null;
+    if (!selectedActivity || !selectedActivity.attendees || selectedActivity.attendees.length === 0) return null;
 
     const { attendees, host } = selectedActivity;
     

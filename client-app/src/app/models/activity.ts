@@ -13,6 +13,7 @@ import { dateFormat, dateTimeFormat } from "../common/formats/dateFormats";
 import UserProfile from "./userProfile";
 import { store } from "../stores/store";
 import ActivityFormValues from "./activityFormValues";
+import { makeAutoObservable } from "mobx";
 
 export class Activity {
   id: string;
@@ -43,6 +44,7 @@ export class Activity {
     isGoing?: boolean,
     isHost?: boolean
   ) {
+    makeAutoObservable(this);
     this.id = id;
     this.title = title;
     this.date = date ? new Date(date!) : null;
