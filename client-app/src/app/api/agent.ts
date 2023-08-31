@@ -5,6 +5,7 @@ import { router } from "../router/Route";
 import { User, UserFormValues } from "../models/user";
 import { store } from "../stores/store";
 import ActivityFormValues from "../models/activityFormValues";
+import UserProfile from "../models/userProfile";
 
 const sleep = (delayMs: number) => new Promise(resolve => setTimeout(resolve, delayMs));
 
@@ -54,15 +55,6 @@ axios.interceptors.response.use(async response => {
   return Promise.reject(error);
 })
 
-// axios.interceptors.request.use(async request => {
-//   console.log('request interceptor');
-//   console.log(request.baseURL);
-//   console.log(request.url);
-//   console.log(request.method);
-
-//   return request;
-// });
-
 const responseBody = <T> (response: AxiosResponse<T>) => response.data;
 
 const requests = {
@@ -87,9 +79,14 @@ const Account = {
   register: (userInfo: UserFormValues) => requests.post<User>('/account/register', userInfo)
 }
 
+const Profiles = {
+  get: (username: string) => requests.get<UserProfile>(`/profiles/${username}`)
+}
+
 const agent = {
   Activities,
-  Account
+  Account,
+  Profiles
 }
 
 export default agent;

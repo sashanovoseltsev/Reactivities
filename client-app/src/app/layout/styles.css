@@ -4,9 +4,9 @@
   box-sizing: border-box;
 }
 
-html {
+/* html {
   font-size: 62.5%;
-}
+} */
  
  body {
   background-color: #EAEAEA !important;
@@ -60,6 +60,10 @@ html {
 
 .react-datepicker-wrapper {
   width: 100%;
+}
+
+.ui.items>.item>.image>img {
+  border-radius: inherit !important;
 }
 
 /*end home page styles*/
