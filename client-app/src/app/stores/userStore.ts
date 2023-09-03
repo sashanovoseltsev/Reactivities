@@ -6,6 +6,7 @@ import { router } from "../router/Route";
 
 export default class UserStore {
   user: User | null = null;
+  loadingUser: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -16,6 +17,7 @@ export default class UserStore {
   }
 
   login = async (userInfo: UserFormValues) => {
+    this.loadingUser = true;
     try {
       const user = await agent.Account.login(userInfo);
       runInAction(() => {
@@ -28,10 +30,16 @@ export default class UserStore {
       })
     } catch (error) {
       throw error;
+    } finally {
+      runInAction(() => {
+        this.loadingUser = false;
+      })
     }
+    
   }
 
   register = async (userInfo: UserFormValues) => {
+    this.loadingUser = true;
     try {
       const user = await agent.Account.register(userInfo);
       store.commonStore.setToken(user.token);
@@ -42,6 +50,10 @@ export default class UserStore {
       store.modalStore.closeModal();      
     } catch (error) {
       throw error;
+    } finally {
+      runInAction(() => {
+        this.loadingUser = false;
+      })
     }
   }
 
@@ -54,6 +66,7 @@ export default class UserStore {
   }
 
   getCurrentUser = async () => {
+    this.loadingUser = true;
     try {
       const user = await agent.Account.current();
       runInAction(() => {
@@ -63,6 +76,14 @@ export default class UserStore {
       // we only log error instead of throwing here because,
       // in such case we will only render empty activites page with unauthorized toast
       console.log(error);
+    } finally {
+      runInAction(() => {
+        this.loadingUser = false;
+      })
     }
+  }
+
+  setMainPhoto = (imageUrl: string) => {
+    if (this.user) this.user.image = imageUrl;
   }
 }
