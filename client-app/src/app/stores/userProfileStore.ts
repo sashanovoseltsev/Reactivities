@@ -61,15 +61,35 @@ export default class UserProfileStore {
       var photo = await agent.Profiles.setMainPhoto(id);
       store.userStore.setMainPhoto(photo.url);
       runInAction(() => {
-        this.userProfile!.photos!.find(p => p.isMain)!.isMain = false;
-        this.userProfile!.photos!.find(p => p.id === photo.id)!.isMain = true;
-        this.userProfile!.image = photo.url;
+        this.updateMainPhotoUrl(this.userProfile?.userName!, photo);
       })
     } catch (error) {
       console.log(error);
     } finally {
       runInAction(() => this.loadingPhotos = false)
     }
+  }
+
+  private updateMainPhotoUrl = (userName: string, photo: Photo) => {
+
+    // Updates main photo info on current user profile
+    this.userProfile!.photos!.find(p => p.isMain)!.isMain = false;
+    this.userProfile!.photos!.find(p => p.id === photo.id)!.isMain = true;
+    this.userProfile!.image = photo.url;
+
+    // Update main photo info for current user on every loaded activity
+    store.activityStore.activityRegistry
+      .forEach((activity, _) => {
+        if (activity.host.userName === userName) {
+          activity.host.image = photo.url;
+        }
+
+        activity.attendees.forEach(attendee => {
+          if (attendee.userName === userName) {
+            attendee.image = photo.url;
+          }
+        })
+      });
   }
 
   deletePhoto = async (photo: Photo) => {

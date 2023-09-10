@@ -45,7 +45,7 @@ export default class ActivityStore {
       const activities = (await agent.Activities.list()).map(a => Activity.FromActivity(a));
       runInAction(() => {
         activities.forEach(activity => {
-          this.addToActivityRegistry(activity);
+          this.addOrUpdateToActivityRegistry(activity);
         });
       })
     } catch (error) {
@@ -58,21 +58,18 @@ export default class ActivityStore {
 
   loadActivity = async (id: string) => {
     this.initialLoading = true;
-    let activity = this.getActivityFromRegistry(id);
 
-    if (!activity) {
-      try {
-        // TS specific! See comment in loadActivities.
-        activity = Activity.FromActivity(await agent.Activities.details(id));
-      } catch (error) {
-        console.log(error);
-      }
+    // to keep activity details info up-to-date we load it from server each time it is requested
+    try {
+      // TS specific! See comment in loadActivities.
+      return Activity.FromActivity(await agent.Activities.details(id));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => {
+        this.initialLoading = false;
+      });
     }
-    
-    runInAction(() => {
-      this.initialLoading = false;
-    });
-    return activity;
   }
 
   createActivity = async (formValues: ActivityFormValues) => {
@@ -85,7 +82,7 @@ export default class ActivityStore {
         // Otherwise it will be only 1 activity in the registry, 
         // as ActivityDashboard only loads all activities in case registy is empty
         if (this.activityRegistry.size > 0)
-          this.addToActivityRegistry(activity);
+          this.addOrUpdateToActivityRegistry(activity);
         this.selectActivity(activity);
       })
     } catch (error) {
@@ -107,7 +104,7 @@ export default class ActivityStore {
         const updatedActivity = Activity.FromActivity({...existingActivity, ...formValues} as Activity);
         // Only update in registry in case activities were loaded.
         if (this.activityRegistry.size > 0)
-          this.addToActivityRegistry(updatedActivity);
+          this.addOrUpdateToActivityRegistry(updatedActivity);
         this.selectActivity(updatedActivity);
       })
     } catch (error) {
@@ -182,23 +179,25 @@ export default class ActivityStore {
 
     try {
       await agent.Activities.updateAttendance(activity.id);
-      activity.isCancelled = !activity.isCancelled;
+      runInAction(() => {
+        activity.isCancelled = !activity.isCancelled;
+      })
       // Only update in registry in case activities were loaded.
       if (this.activityRegistry.size > 0)
-        this.addToActivityRegistry(activity);
+        this.addOrUpdateToActivityRegistry(activity);
 
       this.selectActivity(activity);
 
     } catch (error) {
       console.log(error);
+    } finally {
+      runInAction(() => {
+        this.loading = false;
+      });
     }
-
-    runInAction(() => {
-      this.loading = false;
-    });
   }
 
-  private addToActivityRegistry = (activity: Activity) => {
+  private addOrUpdateToActivityRegistry = (activity: Activity) => {
     this.activityRegistry.set(activity.id, activity);
   }
 

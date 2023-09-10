@@ -18,11 +18,11 @@ const activityImageTextStyle = {
 
 const ActivityDetailedHeader = () => {
 
-  const { 
+  const {
     activityStore: {
-      loading, 
-      updateAttendance, 
-      cancelActivity, 
+      loading,
+      updateAttendance,
+      cancelActivity,
       selectedActivity
     }
   } = useStore();
@@ -31,20 +31,20 @@ const ActivityDetailedHeader = () => {
 
   return (
     <Segment.Group>
-      <Segment basic attached='top' style={{padding: '0'}}>
-        {selectedActivity.isCancelled && 
+      <Segment basic attached='top' style={{ padding: '0' }}>
+        {selectedActivity.isCancelled &&
           <Label ribbon color='red' content='Cancelled'
-           style={{position: 'absolute', left: '-10px', top: '20px', zIndex: 1000}}/>
+            style={{ position: 'absolute', left: '-14px', top: '20px', zIndex: 1000 }} />
         }
-        <Image src={`/assets/categoryImages/${selectedActivity.category}.jpg`} fluid style={activityImageStyle}/>
+        <Image src={`/assets/categoryImages/${selectedActivity.category}.jpg`} fluid style={activityImageStyle} />
         <Segment style={activityImageTextStyle} basic>
           <Item.Group>
             <Item>
               <Item.Content>
-                <Header 
+                <Header
                   size='huge'
                   content={selectedActivity.title}
-                  style={{color: 'white'}}
+                  style={{ color: 'white' }}
                 />
                 <p>{selectedActivity.dateTimeFormatted}</p>
                 <p>
@@ -58,7 +58,7 @@ const ActivityDetailedHeader = () => {
       <Segment clearing attached='bottom'>
         {selectedActivity.isHost ? (
           <>
-            <Button 
+            <Button
               basic
               color={selectedActivity.isCancelled ? 'green' : 'red'}
               floated="left"
@@ -66,23 +66,23 @@ const ActivityDetailedHeader = () => {
               loading={loading}
               onClick={cancelActivity}
             />
-            <Button as={Link} 
-              to={`/manage/${selectedActivity.id}`} 
-              color='orange' 
+            <Button as={Link}
+              to={`/manage/${selectedActivity.id}`}
+              color='orange'
               floated='right'
               disabled={selectedActivity.isCancelled}>
-                Manage Event
+              Manage Event
             </Button>
           </>
         ) : selectedActivity.isGoing ? (
           <Button loading={loading} onClick={updateAttendance}>
             Cancel attendance</Button>
         ) : (
-          <Button loading={loading} 
+          <Button loading={loading}
             disabled={selectedActivity.isCancelled}
-            onClick={updateAttendance} 
+            onClick={updateAttendance}
             color='teal'
-            style={{marginRight: '1rem'}}>
+            style={{ marginRight: '1rem' }}>
             Join Activity
           </Button>
         )}

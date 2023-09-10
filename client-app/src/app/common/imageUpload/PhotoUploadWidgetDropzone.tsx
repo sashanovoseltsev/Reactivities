@@ -18,7 +18,7 @@ const PhotoUploadWidgetDropzone = ({ setFiles }: Props) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
   return (
-    <Dropzone isActive={isDragActive} {...getRootProps()}>
+    <Dropzone $isActive={isDragActive} {...getRootProps()}>
       <input {...getInputProps()} />
       <Icon name='upload' size='huge' />
       <Header content='Drop image here' />
