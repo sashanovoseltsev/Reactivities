@@ -10,6 +10,7 @@ namespace Application.Core
         public MappingProfiles()
         {
             CreateMap<Activity, Activity>();
+            CreateMap<UserProfile, UserProfile>();
 
             CreateMap<AppUser, UserProfile>()
                 .ForMember(profile => profile.UserName, opt => opt.MapFrom(source => source.UserName))

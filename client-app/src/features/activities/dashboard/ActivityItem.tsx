@@ -9,12 +9,12 @@ type Props = {
   activity: Activity
 }
 
-const ActivityItem: FC<Props> = ({activity}) => {
+const ActivityItem: FC<Props> = ({ activity }) => {
   return (
     <Segment.Group>
       <Segment>
-        {activity.isCancelled && 
-          <Label color='red' content='Cancelled' attached="top" style={{textAlign: 'center'}}/>
+        {activity.isCancelled &&
+          <Label color='red' content='Cancelled' attached="top" style={{ textAlign: 'center' }} />
         }
         <Item.Group>
           <Item>
@@ -43,7 +43,7 @@ const ActivityItem: FC<Props> = ({activity}) => {
         </Item.Group>
       </Segment>
       <Segment>
-        <span style={{marginRight: '1rem'}}>
+        <span style={{ marginRight: '1rem' }}>
           <Icon name='clock' />{activity.dateTimeFormatted}
         </span>
         <span>
@@ -55,7 +55,7 @@ const ActivityItem: FC<Props> = ({activity}) => {
       </Segment>
       <Segment clearing>
         <span>{activity.description}</span>
-        <Button 
+        <Button
           as={Link}
           to={`/activities/${activity.id}`}
           color='teal'
@@ -64,6 +64,7 @@ const ActivityItem: FC<Props> = ({activity}) => {
         />
       </Segment>
     </Segment.Group>
-)}
+  )
+}
 
 export default observer(ActivityItem);
