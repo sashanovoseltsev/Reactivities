@@ -34,8 +34,8 @@ const ProfileAboutForm = ({ onSubmitCallback }: Props) => {
           <MyTextInput placeholder='Display Name' name='displayName' />
           <MyTextArea rows={3} placeholder='Bio' name='bio' />
           <Button
-            disabled={isSubmitting || !dirty || !isValid}
-            loading={loadingProfile} floated='right' positive type='submit' content='Submit' />
+            disabled={!dirty || !isValid}
+            loading={isSubmitting} floated='right' positive type='submit' content='Submit' />
         </Form>
       )}
     </Formik>

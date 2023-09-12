@@ -40,8 +40,13 @@ namespace API.Extensions
                 {
                     policy.Requirements.Add(new IsHostRequirement());
                 });
+                opt.AddPolicy("IsProfileOwner", policy => 
+                {
+                    policy.Requirements.Add(new IsProfileOwnerRequirement());
+                });
             });
             services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
+            services.AddTransient<IAuthorizationHandler, IsProfileOwnerRequirementHandler>();
             services.AddScoped<TokenService>();
 
             return services;

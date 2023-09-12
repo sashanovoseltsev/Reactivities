@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Profiles;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -15,12 +12,12 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(query));
         }
 
-        // TODO: Add policy which will allow only the logged in user to update its own profile
+        [Authorize(Policy = "IsProfileOwner")]
         [HttpPut("{username}")]
-        public async Task<IActionResult> UpdateUserProfile(string username, UserProfile profile)
+        public async Task<IActionResult> UpdateUserProfile(string username, Edit.Command editCommand)
         {
-            profile.UserName = username;
-            return HandleResult(await Mediator.Send(new Edit.Command { Profile = profile }));
+            editCommand.UserName = username;
+            return HandleResult(await Mediator.Send(editCommand));
         }
     }
 }

@@ -11,7 +11,7 @@ const ProfilePage = () => {
 
   const { username } = useParams();
 
-  const { userProfileStore: { loadingProfile, loadProfile, userProfile } } = useStore();
+  const { userProfileStore: { loadProfile, userProfile } } = useStore();
 
   useEffect(() => {
     if (username) loadProfile(username);

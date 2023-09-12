@@ -1,14 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Core;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Domain;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistance;
 
@@ -18,51 +10,49 @@ namespace Application.Profiles
     {
         public class Command: IRequest<Result<Unit>>
         {
-            public UserProfile Profile { get; set; }
+            public string UserName { get; set; }
+            public string DisplayName { get; set; }
+            public string Bio { get; set; }
         }
 
         public class CommandValidator: AbstractValidator<Command>
         {
             public CommandValidator()
             {
-                RuleFor(command => command.Profile).SetValidator(new UserProfileValidator());
+                RuleFor(command => command.DisplayName).NotEmpty();
             }
         }
 
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _dbContext;
-            private readonly IMapper _mapper;
-            private readonly UserManager<AppUser> _userManager;
 
-            public Handler(DataContext dbContext, IMapper mapper, UserManager<AppUser> userManager)
+            public Handler(DataContext dbContext)
             {
-                _userManager = userManager;
-                _mapper = mapper;
                 _dbContext = dbContext;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                string errorMessage = $"Editing {request.Profile.UserName} profile failed";
-                IdentityResult result = null;
+                string errorMessage = $"Editing {request.UserName} profile failed";
+                bool isSuccess = false;
                 try
                 {
-                    var user = await _userManager.FindByNameAsync(request.Profile.UserName);
+                    var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.UserName == request.UserName);
 
                     if (user == null) return null;
 
-                    user.DisplayName = request.Profile.DisplayName;
-                    user.Bio = request.Profile.Bio;
+                    user.DisplayName = request.DisplayName;
+                    user.Bio = request.Bio;
 
-                    result = await _userManager.UpdateAsync(user);
+                    isSuccess = await _dbContext.SaveChangesAsync() > 0;
                 }
                 catch (Exception e)
                 {
                     errorMessage = e.ToString();
                 }
 
-                return result.Succeeded 
+                return isSuccess 
                     ? Result<Unit>.Success(Unit.Value)
                     : Result<Unit>.Failure(errorMessage);
             }
