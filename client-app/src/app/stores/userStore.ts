@@ -76,6 +76,8 @@ export default class UserStore {
       // we only log error instead of throwing here because,
       // in such case we will only render empty activites page with unauthorized toast
       console.log(error);
+      // also set token to null. In such case it means that token is expired.
+      store.commonStore.setToken(null);
     } finally {
       runInAction(() => {
         this.loadingUser = false;

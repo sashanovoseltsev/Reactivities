@@ -11,13 +11,20 @@ const ProfilePage = () => {
 
   const { username } = useParams();
 
-  const { userProfileStore: { loadProfile, userProfile } } = useStore();
+  const { userProfileStore: { loadProfile, userProfile }, userStore: { isLoggedIn } } = useStore();
+
+
 
   useEffect(() => {
     if (username) loadProfile(username);
   }, [username, loadProfile])
 
-  if (!userProfile) return <LoadingComponent content='Loading profile...' />
+  if (!isLoggedIn) {
+    return null;
+  } else {
+    if (!userProfile) return <LoadingComponent content='Loading profile...' />
+  }
+
 
   return (
     <Grid>
