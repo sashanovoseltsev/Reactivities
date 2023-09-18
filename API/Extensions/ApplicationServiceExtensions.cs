@@ -26,6 +26,7 @@ namespace API.Extensions
                     policy
                         .SetIsOriginAllowed(origin => true)
                         .AllowAnyMethod()
+                        .AllowCredentials()
                         .AllowAnyHeader();
                         //.WithOrigins("http://*.", "https://*.");
                 });
@@ -41,6 +42,7 @@ namespace API.Extensions
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
+            services.AddSignalR();
 
             return services;
         }

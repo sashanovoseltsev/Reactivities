@@ -12,12 +12,13 @@ import ActivityDetailedSidebar from './ActivityDetailedSidebar';
 const ActivityDetails = () => {
 
   const { activityStore } = useStore();
-  const { loadActivity, initialLoading, selectActivity, selectedActivity } = activityStore;
+  const { loadActivity, initialLoading, selectActivity, selectedActivity, clearSelectedActivity } = activityStore;
 
-  const {id} = useParams();
+  const { id } = useParams();
 
   useEffect(() => {
     if (id) loadActivity(id).then(activity => selectActivity(activity!));
+    return () => clearSelectedActivity();
 
     // empty dependency for component initialization purposes
     // eslint-disable-next-line

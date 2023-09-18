@@ -197,6 +197,10 @@ export default class ActivityStore {
     }
   }
 
+  clearSelectedActivity = () => {
+    this.selectedActivity = null;
+  }
+
   private addOrUpdateToActivityRegistry = (activity: Activity) => {
     this.activityRegistry.set(activity.id, activity);
   }

@@ -11,7 +11,7 @@ interface Props {
 }
 
 const ProfileAboutForm = ({ onSubmitCallback }: Props) => {
-  const { userProfileStore: { userProfile, loadingProfile, updateProfile } } = useStore();
+  const { userProfileStore: { userProfile, updateProfile } } = useStore();
 
   const validationSchema = Yup.object({
     displayName: Yup.string().required('Display Name is a required field.')
