@@ -1,4 +1,5 @@
 using Application.Core;
+using Application.Interfaces;
 using Application.Profiles;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -17,11 +18,13 @@ namespace Application.Activities
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
+            private readonly IUserAccessor _userAccessor;
 
-            public Handler(DataContext context, IMapper mapper)
+            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
                 _context = context;
                 _mapper = mapper;
+                _userAccessor = userAccessor;
             }
             public async Task<Result<List<ActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
@@ -45,7 +48,9 @@ namespace Application.Activities
                         //     }).ToList()
                         // })
                         // or simply
-                        .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider)
+                        .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider, new {
+                            currentUserName = _userAccessor.GetUsername()
+                        })
                         .ToListAsync();
 
                     return Result<List<ActivityDto>>.Success(activities);

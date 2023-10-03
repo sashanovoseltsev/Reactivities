@@ -14,7 +14,7 @@ const ActivityDetailedChat = () => {
             commentStore.createHubConnection(selectedActivity.id);
         }
         return () => {
-            commentStore.cleacComments();
+            commentStore.clearComments();
         }
     }, [selectedActivity, commentStore])
 

@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace Application.Activities
 {
     public class AttendeeDto
@@ -11,5 +6,9 @@ namespace Application.Activities
         public string DisplayName { get; set; }
         public string Bio { get; set; }
         public string Image { get; set; }
+        // Means that the currently logged-in user follows owner of this user profile
+        public bool IsFollowing { get; set; }
+        public int Followers { get; set; }
+        public int Followings { get; set; }
     }
 }

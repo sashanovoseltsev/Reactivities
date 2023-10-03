@@ -15,6 +15,7 @@ export class ChatComment {
     this.id = comment.id;
     this.body = comment.body;
 
+    console.log(comment.createdAt.toString());
     // UTC 'Z' postfix is not returned frob DB...
     if (!comment.createdAt.toString().endsWith('Z')) {
       this.createdAt = new Date(comment.createdAt + "Z");

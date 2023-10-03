@@ -37,7 +37,7 @@ export default class CommentStore {
     this.hubConnection?.stop().catch(error => console.log('Error stopping hub connection: ', error));
   }
 
-  cleacComments = () => {
+  clearComments = () => {
     this.comments = [];
     this.stopHubConnection();
   }
