@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
 import UserProfile, { Photo } from "../models/userProfile";
 import agent from "../api/agent";
 import { store } from "./store";
@@ -8,9 +8,36 @@ export default class UserProfileStore {
   loadingProfile = false;
   uploading = false;
   loadingPhotos = false;
+  loadingFollowers = false;
+  followers: UserProfile[] = [];
+  followings: UserProfile[] = [];
+  activeTab = 0;
 
   constructor() {
     makeAutoObservable(this);
+
+    reaction(
+      () => this.activeTab,
+      activeTab => {
+        if (activeTab === 3) {
+          this.loadFollowers();
+          this.followings = [];
+        } 
+        else if (activeTab === 4)
+        {
+          this.loadFollowings();
+          this.followers = [];
+        }
+        else {
+          this.followers = [];
+          this.followings = [];
+        }
+      }
+    )
+  }
+
+  setActiveTab = (activeTab: number) => {
+    this.activeTab = activeTab;
   }
 
   get isCurrentUser() {
@@ -37,7 +64,6 @@ export default class UserProfileStore {
 
   updateProfile = async (profile: UserProfile) => {
     this.loadingProfile = true;
-
     try {
       await agent.Profiles.update(profile);
       runInAction(() => {
@@ -145,6 +171,106 @@ export default class UserProfileStore {
       console.log(error);
     } finally {
       runInAction(() => this.loadingPhotos = false)
+    }
+  }
+
+  loadFollowers = async () => {
+    this.loadingFollowers = true;
+
+    try {
+      const followers = await agent.Follow.getFollowers(this.userProfile!.userName);
+      runInAction(() => {
+        this.followers = followers;
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => this.loadingFollowers = false)
+    }
+  }
+
+  loadFollowings = async () => {
+    this.loadingFollowers = true;
+
+    try {
+      const followings = await agent.Follow.getFollowings(this.userProfile!.userName);
+      runInAction(() => {
+        this.followings = followings;
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => this.loadingFollowers = false)
+    }
+  }
+
+  toggleFollow = async (profile: UserProfile) => {
+    this.loadingFollowers = true
+    try {
+      await agent.Follow.followToggle(profile.userName);
+      runInAction(() => {
+        // is store.userStore.user follows profile.username
+        const isFollowing = !profile.isFollowing;
+        profile.isFollowing = isFollowing;
+
+        // 1. if currently loaded user profile equals currently logged in user (on who's behalf we toggle follow)
+        if (this.userProfile?.userName === store.userStore.user?.userName) {
+          isFollowing
+            ? this.userProfile!.followings++
+            : this.userProfile!.followings--;
+
+          this.followings = this.followings.filter(userProfile => userProfile.userName !== profile.userName);
+        }
+
+        const follower = this.followers.find(userProfile => userProfile.userName === profile.userName);
+        if (follower) follower.followers += isFollowing ? 1 : -1;
+
+        const following = this.followings.find(userProfile => userProfile.userName === profile.userName);
+        if (following) following.followers += isFollowing ? 1 : -1;
+        
+        if (profile.userName === this.userProfile?.userName) {
+          // 2. if currently loaded UserProfile equals the user we want to follow/unfollow then update same info
+          this.userProfile!.isFollowing = isFollowing;
+          isFollowing
+            ? this.userProfile!.followers++
+            : this.userProfile!.followers--;
+        }
+
+          // 3. on each activity in registry update same info in:
+          // - host
+          // - attendees
+          Array.from(store.activityStore.activityRegistry.values()).forEach(activity => {
+            if (activity.host.userName === profile.userName) {
+              activity.host.isFollowing = isFollowing;
+              isFollowing
+                ? activity.host.followers++
+                : activity.host.followers--;
+            } else if (activity.host.userName === store.userStore.user?.userName) {
+              isFollowing
+                ? activity.host.followings++
+                : activity.host.followings--;
+            }
+
+            activity.attendees.forEach(attendee => {
+              if (attendee.userName === profile.userName) {
+                attendee.isFollowing = isFollowing;
+                isFollowing
+                  ? attendee.followers++
+                  : attendee.followers--;
+              } else if (attendee.userName === store.userStore.user?.userName) {
+                isFollowing
+                  ? attendee.followings++
+                  : attendee.followings--;
+              }
+            })
+          })
+      })
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => {
+        this.loadingFollowers = false;
+      })
     }
   }
 }

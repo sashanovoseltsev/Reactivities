@@ -93,10 +93,17 @@ const Profiles = {
   deletePhoto: (photoId: string) => requests.del(`/photos/${photoId}`)
 }
 
+const Follow = {
+  followToggle: (username: string) => requests.post<void>(`/follow/${username}`, {}),
+  getFollowers: (username: string) => requests.get<UserProfile[]>(`/follow/${username}?predicate=followers`),
+  getFollowings: (username: string) => requests.get<UserProfile[]>(`/follow/${username}?predicate=followings`),
+}
+
 const agent = {
   Activities,
   Account,
-  Profiles
+  Profiles,
+  Follow
 }
 
 export default agent;

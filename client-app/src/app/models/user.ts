@@ -3,6 +3,9 @@ export interface User {
   displayName: string;
   token: string;
   image?: string;
+  followers: number;
+  followings: number;
+  isFollowing: boolean;
 }
 
 export interface UserFormValues {

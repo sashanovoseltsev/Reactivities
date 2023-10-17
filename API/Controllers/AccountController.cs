@@ -25,8 +25,12 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
-            var user = await _userManager.Users.Include(u => u.Photos)
+            var user = await _userManager.Users
+                            .Include(u => u.Photos)
+                            .Include(u => u.Followers)
+                            .Include(u => u.Followings)
                             .FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+                            
 
 
             if (user == null) return Unauthorized();
@@ -66,7 +70,10 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             // User is representing current authenticated user
-            var user = await _userManager.Users.Include(u => u.Photos)
+            var user = await _userManager.Users
+                            .Include(u => u.Photos)
+                            .Include(u => u.Followers)
+                            .Include(u => u.Followings)
                             .FirstOrDefaultAsync(u => u.Email == User.FindFirstValue(ClaimTypes.Email));
 
             if (user == null) return Unauthorized();
@@ -81,7 +88,10 @@ namespace API.Controllers
                 DisplayName = user.DisplayName,
                 UserName = user.UserName,
                 Image = user.Photos?.FirstOrDefault(p => p.IsMain)?.Url,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                Followers = user.Followers.Count,
+                Followings = user.Followers.Count,
+                IsFollowing = false
             };
         }
     }

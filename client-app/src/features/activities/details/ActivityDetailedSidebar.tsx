@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '../../../app/stores/store';
 
-export default observer(function ActivityDetailedSidebar () {
-    const { activityStore: { selectedActivity} } = useStore();
+export default observer(function ActivityDetailedSidebar() {
+    const { activityStore: { selectedActivity } } = useStore();
 
     if (!selectedActivity || !selectedActivity.attendees || selectedActivity.attendees.length === 0) return null;
 
     const { attendees, host } = selectedActivity;
-    
+
     return (
         <>
             <Segment
@@ -38,7 +38,8 @@ export default observer(function ActivityDetailedSidebar () {
                                 <Item.Header as='h3'>
                                     <Link to={`/profiles/${a.userName}`}>{a.displayName}</Link>
                                 </Item.Header>
-                                <Item.Extra style={{ color: 'orange' }}>Following</Item.Extra>
+                                {a.isFollowing &&
+                                    <Item.Extra style={{ color: 'orange' }}>Following</Item.Extra>}
                             </Item.Content>
                         </Item>
                     ))}

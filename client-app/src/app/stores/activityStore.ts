@@ -156,7 +156,10 @@ export default class ActivityStore {
             userName: user.userName,
             displayName: user.displayName,
             bio: undefined,
-            image: user.image
+            image: user.image,
+            followers: 0,
+            followings: 0,
+            isFollowing: false
           }
           this.selectedActivity!.attendees.push(userProfile);
         }

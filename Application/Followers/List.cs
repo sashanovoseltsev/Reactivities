@@ -44,7 +44,7 @@ namespace Application.Followers
                                         })
                                         .ToListAsync();
                         break;
-                    case "following":
+                    case "followings":
                         // list of profiles who are followed by UserName
                         profiles = await _dbContext.UserFollowings.Where(uf => uf.Observer.UserName == query.UserName)
                                         .Select(uf => uf.Target)

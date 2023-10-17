@@ -9,19 +9,25 @@ interface Props {
   attendees: UserProfile[]
 }
 
-const ActivityListItemAttendees:FC<Props> = ({attendees}) => {
+const ActivityListItemAttendees: FC<Props> = ({ attendees }) => {
+  const styles = {
+    borderColor: 'orange',
+    borderWidth: 2,
+    padding: '1px',
+  }
+
   return (
     <List horizontal>
-      { attendees.map(a => (
+      {attendees.map(a => (
         <Popup key={a.userName}
           trigger={
             <List.Item key={a.userName} as={Link} to={`/profiles/${a.userName}`}>
-              <Image size="mini" circular src={a.image || '/assets/user.png'}/>
+              <Image size="mini" circular src={a.image || '/assets/user.png'} bordered style={a.isFollowing ? styles : null} />
             </List.Item>}
           hoverable
         >
           <Popup.Content>
-            <ProfileCard userProfile={a}/>
+            <ProfileCard userProfile={a} />
           </Popup.Content>
         </Popup>
 
